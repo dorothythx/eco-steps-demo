@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Eco Steps — เปลี่ยนทุกก้าวเล็ก ๆ ให้โลกดีขึ้น</title>
+<meta name="description" content="Eco Steps Demo — เว็บแอปพลิเคชัน Gamification ส่งเสริมกิจกรรมอนุรักษ์สิ่งแวดล้อมสำหรับนักเรียน">
+<link rel="icon" href="assets/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=Sarabun:wght@400;500;600;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Demo ribbon -->
+<div class="demo-ribbon">🌱 Demo Version — สำหรับการพัฒนาเว็ปแอพพลิเคชั่น</div>
+
+<!-- ===== NAV ===== -->
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand" href="#" data-nav="home">
+      <img src="assets/logo.jpg" alt="Eco Steps" class="brand__logo">
+    </a>
+
+    <nav class="navlinks" id="navlinks">
+      <button class="navlink" data-nav="home"><span class="navlink__icon"></span><span>หน้าหลัก</span></button>
+      <button class="navlink" data-nav="dashboard"><span class="navlink__icon"></span><span>Dashboard</span></button>
+      <button class="navlink" data-nav="mission"><span class="navlink__icon"></span><span>Mission</span></button>
+      <button class="navlink" data-nav="rewards"><span class="navlink__icon"></span><span>Rewards</span></button>
+      <button class="navlink" data-nav="profile"><span class="navlink__icon"></span><span>Profile</span></button>
+      <button class="navlink" data-nav="marketplace"><span class="navlink__icon"></span><span>Marketplace</span></button>
+      <button class="navlink" data-nav="impact"><span class="navlink__icon"></span><span>Impact</span></button>
+    </nav>
+
+    <div class="topbar__actions">
+      <span class="pill pill--points" id="topPoints">0 pts</span>
+      <button class="btn btn--ghost btn--sm" id="resetDemoBtn">Reset Demo</button>
+    </div>
+
+    <button class="hamburger" id="hamburgerBtn" aria-label="เมนู">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile bottom tab bar -->
+<nav class="tabbar" id="tabbar">
+  <button class="tabbar__item" data-nav="home"><span>🏠</span><small>หน้าหลัก</small></button>
+  <button class="tabbar__item" data-nav="dashboard"><span>📊</span><small>Dashboard</small></button>
+  <button class="tabbar__item" data-nav="mission"><span>🎯</span><small>Mission</small></button>
+  <button class="tabbar__item" data-nav="rewards"><span>🏆</span><small>Rewards</small></button>
+  <button class="tabbar__item" data-nav="profile"><span>👤</span><small>Profile</small></button>
+</nav>
+
+<main id="app">
+
+  <!-- ===================== HOME ===================== -->
+  <section class="page" id="page-home" data-page="home">
+    <div class="hero">
+      <div class="hero__doodles" aria-hidden="true">
+        <span class="doodle doodle--leaf1">🌱</span>
+        <span class="doodle doodle--leaf2">🌿</span>
+        <span class="doodle doodle--star1">⭐</span>
+        <span class="doodle doodle--star2">✨</span>
+        <span class="doodle doodle--earth">🌎</span>
+        <span class="doodle doodle--recycle">♻️</span>
+      </div>
+      <div class="hero__content">
+        <span class="eyebrow">Eco Steps · โครงงานเทคโนโลยีเพื่อโลก</span>
+        <h1 class="hero__title">เปลี่ยนทุก<span class="highlight">ก้าวเล็ก ๆ</span><br>ให้โลกดีขึ้น</h1>
+        <p class="hero__desc">Eco Steps ช่วยให้นักเรียนเปลี่ยนกิจกรรมรักษ์โลกในชีวิตประจำวัน ให้กลายเป็นภารกิจที่สนุกและมีระบบสะสมคะแนน ทำภารกิจ เก็บแต้ม เลื่อนเลเวล ปลดล็อกรางวัล — ทีละก้าว</p>
+        <div class="hero__actions">
+          <button class="btn btn--primary btn--lg" data-action="try-demo">เช็คเลย 🌱</button>
+          <button class="btn btn--outline btn--lg" data-action="start-mission">เริ่มทำภารกิจ →</button>
+        </div>
+      </div>
+      <div class="hero__trail" id="heroTrail" aria-hidden="true"></div>
+    </div>
+
+    <div class="section-block">
+      <h2 class="section-title">Flow ของ Eco Steps</h2>
+      <div class="flowrow">
+        <div class="flowcard"><span class="flowcard__icon">🎯</span><h3>Mission</h3><p>ทำภารกิจรักษ์โลกง่าย ๆ ในชีวิตประจำวัน</p></div>
+        <div class="flowarrow">→</div>
+        <div class="flowcard"><span class="flowcard__icon">⭐</span><h3>Points</h3><p>รับคะแนนทุกครั้งที่ทำภารกิจสำเร็จ</p></div>
+        <div class="flowarrow">→</div>
+        <div class="flowcard"><span class="flowcard__icon">📈</span><h3>Level</h3><p>สะสมคะแนนเพื่อเลื่อนระดับ</p></div>
+        <div class="flowarrow">→</div>
+        <div class="flowcard"><span class="flowcard__icon">🏆</span><h3>Rewards</h3><p>ปลดล็อกรางวัลพิเศษอัตโนมัติ</p></div>
+      </div>
+    </div>
+
+    <div class="feedback-strip">
+      <p>ลองใช้แล้ว ช่วยบอกความคิดเห็นให้เราหน่อย 💚 ใช้เวลาเพียง 1–2 นาที</p>
+      <button class="btn btn--sun" id="feedbackBtnHome">💬 ให้ Feedback</button>
+    </div>
+  </section>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <section class="page" id="page-dashboard" data-page="dashboard">
+    <div class="page-head">
+      <h1>Dashboard</h1>
+      <p>ภาพรวมความคืบหน้าของคุณในภารกิจรักษ์โลก</p>
+    </div>
+
+    <div class="dash-grid">
+      <div class="card card--profile-summary">
+        <div class="avatar-circle" id="dashAvatar">🧑</div>
+        <div class="profile-summary__info">
+          <h2 id="dashName">เรียนดี รักษ์สิ่งแวดล้อม</h2>
+          <p id="dashClass">ชั้น ม.5/1 · รหัส DEMO001</p>
+          <div class="levelbadge">Level <span id="dashLevel">1</span></div>
+        </div>
+      </div>
+
+      <div class="card card--stat">
+        <span class="card--stat__label">คะแนนสะสม</span>
+        <span class="card--stat__value" id="dashPoints">0</span>
+        <span class="card--stat__unit">คะแนน</span>
+      </div>
+
+      <div class="card card--stat">
+        <span class="card--stat__label">ภารกิจสำเร็จ</span>
+        <span class="card--stat__value" id="dashMissionCount">0</span>
+        <span class="card--stat__unit">ภารกิจ</span>
+      </div>
+
+      <div class="card card--progress">
+        <div class="card--progress__head">
+          <span>ความคืบหน้าสู่ Level ถัดไป</span>
+          <span id="dashProgressLabel">0/20</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="dashProgressFill"></div></div>
+        <div class="step-trail" id="dashStepTrail"></div>
+      </div>
+
+      <div class="card card--next-reward">
+        <span class="card--stat__label">รางวัลถัดไป</span>
+        <div id="dashNextReward" class="next-reward__box">—</div>
+      </div>
+
+      <div class="card card--missions-suggest">
+        <div class="card--head-row"><h3>ภารกิจแนะนำ</h3><button class="link-btn" data-nav="mission">ดูทั้งหมด →</button></div>
+        <div id="dashSuggestMissions" class="suggest-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MISSION LIST ===================== -->
+  <section class="page" id="page-mission" data-page="mission">
+    <div class="page-head">
+      <h1>Mission</h1>
+      <p>เลือกภารกิจรักษ์โลกที่อยากทำวันนี้ — สำเร็จ 1 ภารกิจ ได้ 5 คะแนน</p>
+    </div>
+    <div class="mission-grid" id="missionGrid"></div>
+  </section>
+
+  <!-- ===================== SUBMIT MISSION ===================== -->
+  <section class="page" id="page-submit" data-page="submit">
+    <div class="page-head">
+      <button class="back-btn" data-nav="mission">← กลับไป Mission</button>
+      <h1 id="submitTitle">ส่งภารกิจ</h1>
+      <p id="submitDesc">แนบรูปก่อน-หลัง และเล่าให้เราฟังหน่อยว่าคุณทำอะไรมาบ้าง</p>
+    </div>
+
+    <form class="submit-form" id="submitForm">
+      <div class="upload-row">
+        <div class="upload-box">
+          <label for="beforeImg">📸 รูปก่อนทำ</label>
+          <input type="file" id="beforeImg" accept="image/*">
+          <div class="preview" id="beforePreview"><span class="preview__placeholder">ยังไม่มีรูป</span></div>
+        </div>
+        <div class="upload-box">
+          <label for="afterImg">📸 รูปหลังทำ</label>
+          <input type="file" id="afterImg" accept="image/*">
+          <div class="preview" id="afterPreview"><span class="preview__placeholder">ยังไม่มีรูป</span></div>
+        </div>
+      </div>
+
+      <label class="field-label" for="missionDesc">คำอธิบาย</label>
+      <textarea id="missionDesc" rows="4" placeholder="เล่าให้เราฟังว่าคุณทำภารกิจนี้อย่างไร..."></textarea>
+
+      <button type="submit" class="btn btn--primary btn--lg btn--block">ส่งภารกิจ 🎉</button>
+    </form>
+  </section>
+
+  <!-- ===================== REWARDS ===================== -->
+  <section class="page" id="page-rewards" data-page="rewards">
+    <div class="page-head">
+      <h1>Rewards</h1>
+      <p>รางวัลจะปลดล็อกอัตโนมัติเมื่อคุณเลื่อนเลเวล</p>
+    </div>
+    <div class="reward-grid" id="rewardGrid"></div>
+  </section>
+
+  <!-- ===================== PROFILE ===================== -->
+  <section class="page" id="page-profile" data-page="profile">
+    <div class="page-head">
+      <h1>Profile</h1>
+      <p>ข้อมูลบัญชีทดลองใช้งานของคุณ</p>
+    </div>
+
+    <div class="profile-grid">
+      <div class="card profile-card">
+        <div class="avatar-circle avatar-circle--big" id="profileAvatar">🧑</div>
+        <h2 id="profileName">เรียนดี รักษ์สิ่งแวดล้อม</h2>
+        <p id="profileClass">ชั้น ม.5/1</p>
+        <p class="muted">รหัส Demo: DEMO001</p>
+
+        <div class="avatar-select">
+          <span class="field-label">เลือก Avatar</span>
+          <div class="avatar-options">
+            <button class="avatar-option" data-avatar="male" id="avatarMaleBtn">🧑</button>
+            <button class="avatar-option" data-avatar="female" id="avatarFemaleBtn">👧</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card profile-stats">
+        <div class="profile-stats__row"><span>คะแนนสะสม</span><strong id="profilePoints">0</strong></div>
+        <div class="profile-stats__row"><span>level</span><strong id="profileLevel">1</strong></div>
+        <div class="profile-stats__row"><span>ภารกิจสำเร็จ</span><strong id="profileMissionCount">0</strong></div>
+        <div class="profile-stats__row"><span>รางวัลที่ได้รับ</span><strong id="profileRewardCount">0</strong></div>
+        <h3 class="profile-stats__subhead">Rewards ที่ได้รับ</h3>
+        <div id="profileRewardList" class="profile-reward-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MARKETPLACE ===================== -->
+  <section class="page" id="page-marketplace" data-page="marketplace">
+    <div class="page-head">
+      <h1>Eco Marketplace</h1>
+      <p>ร้านค้าสำหรับสินค้ารักษ์โลก — ซื้อด้วยเงินจริง ไม่เกี่ยวข้องกับระบบคะแนน</p>
+    </div>
+    <div class="market-grid" id="marketGrid"></div>
+  </section>
+
+  <!-- ===================== IMPACT DASHBOARD ===================== -->
+  <section class="page" id="page-impact" data-page="impact">
+    <div class="page-head">
+      <h1>Impact Dashboard</h1>
+      <p>ผลกระทบเชิงบวกของ Eco Steps ในระดับโรงเรียน <span class="tag">ข้อมูลตัวอย่างสำหรับ Demo</span></p>
+    </div>
+
+    <div class="impact-grid">
+      <div class="card impact-stat"><span class="impact-stat__icon">🧑‍🎓</span><span class="impact-stat__value" data-count="128">0</span><span class="impact-stat__label">นักเรียนเข้าร่วม (คน)</span></div>
+      <div class="card impact-stat"><span class="impact-stat__icon">🎯</span><span class="impact-stat__value" data-count="642">0</span><span class="impact-stat__label">ภารกิจสำเร็จ</span></div>
+      <div class="card impact-stat"><span class="impact-stat__icon">🗑️</span><span class="impact-stat__value" data-count="85">0</span><span class="impact-stat__label">ขยะที่คัดแยก (กก.)</span></div>
+      <div class="card impact-stat"><span class="impact-stat__icon">🧴</span><span class="impact-stat__value" data-count="420">0</span><span class="impact-stat__label">ขวดพลาสติกลดลง (ขวด)</span></div>
+      <div class="card impact-stat"><span class="impact-stat__icon">🌎</span><span class="impact-stat__value" data-count="56">0</span><span class="impact-stat__label">CO₂ ที่ลดได้ (kgCO₂e)</span></div>
+    </div>
+
+    <div class="card impact-chart">
+      <h3>สัดส่วนภารกิจที่ทำสำเร็จ แยกตามหมวด</h3>
+      <div class="barchart" id="impactBarChart"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <img src="assets/logo.jpg" alt="Eco Steps" class="site-footer__logo">
+    <p>Eco Steps Demo / Prototype — ข้อมูลในระบบเป็นข้อมูลจำลองสำหรับการทดลองใช้งาน</p>
+    <button class="btn btn--sun btn--sm" id="feedbackBtnFooter">🌱 ช่วยพัฒนา Eco Steps</button>
+  </div>
+</footer>
+
+<!-- ===== Overlays ===== -->
+<div class="modal-backdrop" id="tryDemoModal">
+  <div class="modal">
+    <div class="modal__icon">🌱</div>
+    <h2>ยินดีต้อนรับสู่ Eco Steps Demo</h2>
+    <p>เข้าสู่บัญชีตัวอย่าง</p>
+    <div class="demo-account-box">
+      <div class="demo-account-box__avatar">🧑</div>
+      <div>
+        <strong>เรียนดี รักษ์สิ่งแวดล้อม</strong>
+        <div class="muted">ชั้น ม.5/1 · รหัส DEMO001</div>
+      </div>
+    </div>
+    <button class="btn btn--primary btn--block" id="confirmDemoBtn">เข้าสู่ Demo →</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="productModal">
+  <div class="modal">
+    <button class="modal__close" data-close="productModal">✕</button>
+    <div class="modal__product-img" id="productModalImg">🛍️</div>
+    <h2 id="productModalName">สินค้า</h2>
+    <p id="productModalDesc" class="muted"></p>
+    <div class="modal__price" id="productModalPrice">0 บาท</div>
+    <p class="modal__note">* Demo เท่านั้น ไม่มีระบบชำระเงินจริง</p>
+    <button class="btn btn--outline btn--block" data-close="productModal">ปิดหน้าต่าง</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="resetModal">
+  <div class="modal">
+    <div class="modal__icon">🔄</div>
+    <h2>รีเซ็ต Demo?</h2>
+    <p>คะแนน, Level, ภารกิจ, Avatar และ Rewards ทั้งหมดจะกลับเป็นค่าเริ่มต้น</p>
+    <div class="modal__actions">
+      <button class="btn btn--outline" data-close="resetModal">ยกเลิก</button>
+      <button class="btn btn--primary" id="confirmResetBtn">ยืนยันรีเซ็ต</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts / popups -->
+<div class="toast" id="toast"></div>
+
+<div class="popup-backdrop" id="missionSuccessPopup">
+  <div class="popup popup--success">
+    <div class="popup__burst">🎉</div>
+    <h2>ส่งภารกิจสำเร็จ 🎉</h2>
+    <p id="missionSuccessPoints">+5 คะแนน</p>
+    <button class="btn btn--primary btn--block" data-close="missionSuccessPopup">เยี่ยมเลย!</button>
+  </div>
+</div>
+
+<div class="popup-backdrop" id="levelUpPopup">
+  <div class="popup popup--levelup">
+    <div class="popup__burst">🎉</div>
+    <h2>Level Up!</h2>
+    <p>คุณขึ้น Level <span id="levelUpNumber">2</span> แล้ว</p>
+    <div class="popup__reward" id="levelUpReward"></div>
+    <button class="btn btn--primary btn--block" data-close="levelUpPopup">ไปต่อ 🌱</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+</body>
+</html>
