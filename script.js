@@ -10,10 +10,54 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_ANON_KEY
 );
 
+
+// สร้าง Profile ให้ Anonymous User
+async function ensureProfile() {
+  const { data: sessionData, error: sessionError } =
+    await supabaseClient.auth.getSession();
+
+  if (sessionError || !sessionData.session) {
+    console.error("ไม่พบ Anonymous Session:", sessionError);
+    return;
+  }
+
+  const user = sessionData.session.user;
+
+  const { data: profile, error: profileError } =
+    await supabaseClient
+      .from("profiles")
+      .select("id")
+      .eq("id", user.id)
+      .maybeSingle();
+
+  if (profileError) {
+    console.error("ตรวจสอบ Profile ไม่สำเร็จ:", profileError);
+    return;
+  }
+
+  if (!profile) {
+    const { error: insertError } =
+      await supabaseClient
+        .from("profiles")
+        .insert({
+          id: user.id
+        });
+
+    if (insertError) {
+      console.error("สร้าง Profile ไม่สำเร็จ:", insertError);
+      return;
+    }
+
+    console.log("สร้าง Profile สำเร็จ:", user.id);
+  }
+}
+
+
 /* =========================================================
    Eco Steps Demo — script.js
    Frontend-only prototype. State persisted in localStorage.
    ========================================================= */
+
 (function () {
   "use strict";
 
@@ -315,23 +359,31 @@ async function loadMissionsFromSupabase() {
     .order("id");
 
   if (error) {
-    console.error("โหลดภารกิจไม่สำเร็จ:", error);
+    console.error("โหลดภารกิจจาก Supabase ไม่สำเร็จ:", error);
+    showToast("⚠️ โหลดภารกิจจาก Supabase ไม่ได้ — ใช้ภารกิจสำรองชั่วคราว (ส่งภารกิจจะไม่ผ่าน)");
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    console.warn("ตาราง missions ใน Supabase ยังไม่มีข้อมูล (0 แถว) — ตรวจสอบว่าใส่ข้อมูล/เปิด RLS SELECT ให้อ่านได้หรือยัง");
+    showToast("⚠️ ยังไม่พบภารกิจในฐานข้อมูล Supabase — ใช้ภารกิจสำรองชั่วคราว");
     return;
   }
 
   console.log("โหลดภารกิจจาก Supabase สำเร็จ:", data);
 
-  if (data && data.length > 0) {
-    MISSIONS = data.map((mission, index) => ({
-      id: mission.id,
-      icon: ["🗑️", "🥤", "💡", "💧", "🌱"][index] || "🌱",
-      name: mission.title,
-      desc: mission.description,
-      diff: "ง่าย"
-    }));
+  MISSIONS = data.map((mission, index) => ({
+    id: mission.id,
+    icon: ["🗑️", "🧴", "🧃", "💡", "🧹", "📄", "🚿", "🔌"][index] || "🌱",
+    name: mission.title,
+    desc: mission.description,
+    diff: "ง่าย"
+  }));
 
-    renderMissions();
-  }
+  // รีเฟรชหน้าที่กำลังเปิดอยู่ตอนนี้ ให้ใช้ภารกิจชุดจริงจาก Supabase ทันที
+  const activePage = document.querySelector(".page.active")?.dataset.page;
+  if (activePage === "mission") renderMissions();
+  if (activePage === "dashboard") renderDashboard();
 }
 
   /* ---------------- Submit mission ---------------- */
@@ -379,14 +431,16 @@ async function loadMissionsFromSupabase() {
   const { data: sessionData } = await supabaseClient.auth.getSession();
 
   if (!sessionData.session) {
-    alert("ไม่พบผู้ใช้งาน กรุณารีเฟรชหน้าเว็บแล้วลองใหม่");
+    alert("ไม่พบผู้ใช้งาน กรุณาเข้าสู่ระบบก่อนส่งภารกิจ");
+    const loginScreen = document.getElementById("loginScreen");
+    if (loginScreen) loginScreen.style.display = "";
     return;
   }
 
   const userId = sessionData.session.user.id;
 
   const description =
-    $("#submitDesc")?.value?.trim() || "";
+  $("#missionDesc")?.value?.trim() || "";
 
   const { data, error } = await supabaseClient
     .from("submissions")
@@ -582,16 +636,110 @@ async function loadMissionsFromSupabase() {
     requestAnimationFrame(tick);
   }
 
-  /* ---------------- Init ---------------- */
+
+async function handleLogin() {
+  const fullName = document.getElementById("loginFullName").value.trim();
+  const className = document.getElementById("loginClass").value.trim();
+  const studentCode = document.getElementById("loginStudentCode").value.trim();
+
+  if (!fullName || !className || !studentCode) {
+    alert("กรุณากรอกข้อมูลให้ครบ");
+    return;
+  }
+
+  const { data: authData, error: authError } =
+    await supabaseClient.auth.signInAnonymously();
+
+  if (authError) {
+    console.error("Anonymous Auth Error:", authError);
+    alert("ไม่สามารถเข้าสู่ระบบได้");
+    return;
+  }
+
+  const userId = authData.user.id;
+
+  const { error: profileError } =
+    await supabaseClient
+      .from("profiles")
+      .upsert({
+        id: userId,
+        full_name: fullName,
+        class_name: className,
+        student_code: studentCode
+      });
+
+  if (profileError) {
+    console.error("Profile Error:", profileError);
+    alert("บันทึกข้อมูลไม่สำเร็จ");
+    return;
+  }
+
+  localStorage.setItem("ecosteps_logged_in", "true");
+  localStorage.setItem("ecosteps_user_id", userId);
+
+  const loginScreen = document.getElementById("loginScreen");
+  if (loginScreen) {
+    loginScreen.style.display = "none";
+  } else {
+    console.error("ไม่พบ element id='loginScreen' ใน HTML — ตรวจสอบว่า id ตรงกันหรือไม่");
+  }
+
+  // สำคัญ: บอกระบบ navigate() ว่า "เข้าระบบแล้ว" ไม่งั้นปุ่มเมนูอื่น ๆ
+  // จะเด้ง popup Try Demo เก่าขึ้นมาแทนที่จะพาไปหน้าที่ต้องการ
+  state.demoStarted = true;
+  saveState();
+
+  console.log("เข้าสู่ระบบสำเร็จ:", userId);
+
+  // พาเข้าหน้า Dashboard ทันทีหลังล็อกอินสำเร็จ
+  navigate("dashboard");
+}
+
+document.getElementById("loginForm")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  handleLogin();
+});
+
+/* ---------------- Init ---------------- */
+
 async function init() {
   updateTopPoints();
   renderHeroTrail();
-  navBtns.forEach(b => b.classList.toggle("active", b.dataset.nav === "home"));
+
+  navBtns.forEach(b =>
+    b.classList.toggle("active", b.dataset.nav === "home")
+  );
+
   window.addEventListener("resize", renderHeroTrail);
 
+  // โหลดภารกิจจริงจาก Supabase ให้เสร็จก่อน แล้วค่อยพาไปหน้าไหนก็ตาม
+  // (เดิมสลับลำดับ ทำให้บางทีหน้า Mission ที่เห็นเป็นชุด hardcode เก่า ไม่ใช่ของจริงจาก Supabase)
+  await loadMissionsFromSupabase();
+
+  // เช็ค session จริงจาก Supabase แทนการเชื่อ flag ใน localStorage เฉย ๆ
+  // (flag อาจค้างจากการทดสอบครั้งก่อน ทั้งที่ session จริงหมดอายุ/ไม่มีแล้ว
+  // ถ้าเชื่อ flag เพียวๆ จะข้ามหน้า login ทั้งที่ไม่มี user จริงผูกอยู่ ทำให้ส่งภารกิจไม่ได้)
+  const { data: sessionCheck } = await supabaseClient.auth.getSession();
+  const hasValidSession = !!(sessionCheck && sessionCheck.session);
+
+  const loginScreen = document.getElementById("loginScreen");
+
+  if (hasValidSession) {
+    if (loginScreen) loginScreen.style.display = "none";
+    state.demoStarted = true;
+    saveState();
+    navigate("dashboard");
+  } else {
+    // ไม่มี session จริง -> ล้าง flag เก่าทิ้ง แล้วโชว์หน้า login ให้กรอกใหม่
+    localStorage.removeItem("ecosteps_logged_in");
+    localStorage.removeItem("ecosteps_user_id");
+    if (loginScreen) loginScreen.style.display = ""; // เผื่อเคยถูกสั่งซ่อนไว้ ให้กลับมาโชว์ตามค่าเริ่มต้น
+    renderAndGo("home");
+  }
+
   await ensureProfile();
-  loadMissionsFromSupabase();
 }
 
-  init();
-})();
+init();
+
+})(); // <-- ปิด IIFE ที่เปิดไว้บรรทัดบนสุด (นี่คือจุดที่ขาดหายไปและทำให้ทั้งไฟล์พังก่อนหน้านี้)

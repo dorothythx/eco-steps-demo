@@ -332,6 +332,44 @@
   </div>
 </div>
 
+<!-- Login / Register -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-icon">🌱</div>
+
+    <h1>ยินดีต้อนรับสู่ Eco Steps</h1>
+    <p>กรอกข้อมูลเพื่อเริ่มต้นการเดินทางรักษ์โลก</p>
+
+    <form id="loginForm">
+      <label>ชื่อ-นามสกุล</label>
+      <input
+        id="loginFullName"
+        type="text"
+        placeholder="ชื่อ-นามสกุล"
+        required
+      />
+
+      <label>ชั้น</label>
+      <input
+        id="loginClass"
+        type="text"
+        placeholder="เช่น ม.5/1"
+        required
+      />
+
+      <label>รหัสนักเรียน</label>
+      <input
+        id="loginStudentCode"
+        type="text"
+        placeholder="รหัสนักเรียน"
+        required
+      />
+
+      <button type="submit">เริ่มใช้งาน 🌱</button>
+    </form>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 </body>

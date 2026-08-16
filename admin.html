@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Eco Steps - Admin Review</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f8f3;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .submission {
+      background: white;
+      padding: 20px;
+      margin: 16px 0;
+      border-radius: 18px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.06);
+    }
+
+    .info {
+      margin: 8px 0;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-right: 8px;
+      font-weight: bold;
+    }
+
+    .approve {
+      background: #4caf50;
+      color: white;
+    }
+
+    .reject {
+      background: #eee;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🌱 Eco Steps Admin Review</h1>
+
+  <p id="loading">กำลังโหลดรายการ...</p>
+
+  <div id="submissionList"></div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = "https://rcyhzhrfzmxiqqtubxzs.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_DxfpxxjOan0XCrETEq8kXQ_4s2o7suI";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+
+// โหลดภารกิจที่รอตรวจ
+async function loadSubmissions() {
+
+  const { data, error } = await supabaseClient
+    .from("submissions")
+    .select(`
+      id,
+      user_id,
+      mission_id,
+      description,
+      status,
+      created_at,
+      profiles (
+        full_name,
+        class_name,
+        student_code
+      ),
+      missions (
+        title,
+        points
+      )
+    `)
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    document.getElementById("loading").textContent =
+      "โหลดข้อมูลไม่สำเร็จ";
+    return;
+  }
+
+  document.getElementById("loading").style.display = "none";
+
+  const list = document.getElementById("submissionList");
+
+  if (!data || data.length === 0) {
+    list.innerHTML = "<p>🎉 ไม่มีภารกิจที่รอตรวจ</p>";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.forEach(item => {
+
+    const profile = item.profiles;
+    const mission = item.missions;
+
+    const card = document.createElement("div");
+
+    card.className = "submission";
+
+    card.innerHTML = `
+      <h2>🌱 ${mission?.title || "ไม่พบชื่อภารกิจ"}</h2>
+
+      <div class="info">
+        <b>นักเรียน:</b>
+        ${profile?.full_name || "-"}
+      </div>
+
+      <div class="info">
+        <b>ชั้น:</b>
+        ${profile?.class_name || "-"}
+      </div>
+
+      <div class="info">
+        <b>รหัส:</b>
+        ${profile?.student_code || "-"}
+      </div>
+
+      <div class="info">
+        <b>คำอธิบาย:</b>
+        ${item.description || "-"}
+      </div>
+
+      <div class="info">
+        <b>สถานะ:</b>
+        ${item.status}
+      </div>
+
+      <br>
+
+      <button
+        class="approve"
+        onclick="approveSubmission('${item.id}')">
+        ✅ อนุมัติ +5 คะแนน
+      </button>
+
+      <button
+        class="reject"
+        onclick="rejectSubmission('${item.id}')">
+        ❌ ไม่อนุมัติ
+      </button>
+    `;
+
+    list.appendChild(card);
+  });
+}
+
+
+// อนุมัติ
+async function approveSubmission(id) {
+
+  const { data, error } = await supabaseClient
+    .rpc("approve_submission", {
+      submission_id: id
+    });
+
+  if (error) {
+    console.error(error);
+    alert("อนุมัติไม่สำเร็จ");
+    return;
+  }
+
+  if (!data.success) {
+    alert(data.message);
+    return;
+  }
+
+  alert("อนุมัติสำเร็จ! นักเรียนได้รับ 5 คะแนน 🌱");
+
+  loadSubmissions();
+}
+
+
+// ไม่อนุมัติ
+async function rejectSubmission(id) {
+
+  const { error } = await supabaseClient
+    .from("submissions")
+    .update({
+      status: "rejected",
+      reviewed_at: new Date().toISOString()
+    })
+    .eq("id", id);
+
+  if (error) {
+    console.error(error);
+    alert("ไม่สามารถปฏิเสธภารกิจได้");
+    return;
+  }
+
+  alert("ไม่อนุมัติภารกิจแล้ว");
+
+  loadSubmissions();
+}
+
+
+loadSubmissions();
+
+</script>
+
+</body>
+</html>
