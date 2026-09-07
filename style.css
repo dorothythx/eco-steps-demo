@@ -755,3 +755,149 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     height: 18px;
   }
 }
+/* =========================================================
+   🛍️ ECO STEPS — MARKETPLACE POLISH
+   ========================================================= */
+
+#page-marketplace .page-head {
+  text-align: center;
+  padding: 42px 0 24px;
+}
+
+#page-marketplace .page-head h1 {
+  font-size: 2.35rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+#page-marketplace .page-head p {
+  font-size: .95rem;
+}
+
+/* Product grid */
+#page-marketplace .market-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 12px;
+}
+
+/* Product card */
+#page-marketplace .product-card {
+  position: relative;
+  border-radius: 24px;
+  border: 1px solid rgba(82, 183, 136, .18);
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(27, 67, 50, .07);
+  overflow: hidden;
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
+}
+
+#page-marketplace .product-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(82, 183, 136, .35);
+  box-shadow: 0 15px 30px rgba(27, 67, 50, .13);
+}
+
+/* Product image area */
+#page-marketplace .product-card__img {
+  position: relative;
+  height: 175px;
+  background:
+    radial-gradient(circle at 25% 25%, rgba(255,255,255,.8) 0 7%, transparent 8%),
+    linear-gradient(145deg, #e5f7e9 0%, #f7fcf5 100%);
+  font-size: 4.2rem;
+  transition: transform .22s ease;
+}
+
+/* Decorative leaf */
+#page-marketplace .product-card__img::after {
+  content: "🍃";
+  position: absolute;
+  right: 13px;
+  bottom: 8px;
+  font-size: 1.8rem;
+  opacity: .35;
+  transform: rotate(18deg);
+}
+
+#page-marketplace .product-card:hover .product-card__img {
+  transform: scale(1.02);
+}
+
+/* Product body */
+#page-marketplace .product-card__body {
+  padding: 18px;
+  gap: 9px;
+}
+
+/* Product name */
+#page-marketplace .product-card__body h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--forest);
+}
+
+/* Price */
+#page-marketplace .product-card__price {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: #fff4bd;
+  color: var(--sun-dark);
+  font-size: .88rem;
+  font-weight: 800;
+}
+
+/* Buttons */
+#page-marketplace .product-card .btn {
+  margin-top: auto;
+  min-height: 42px;
+  border-radius: 14px;
+}
+
+/* Small shop decoration */
+#page-marketplace .market-grid::before {
+  content: "🌱 เลือกของใช้ดี ๆ ให้โลกกันเถอะ";
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--pine);
+  font-size: .88rem;
+  font-weight: 700;
+  margin-bottom: -4px;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+  #page-marketplace .market-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  #page-marketplace .page-head {
+    padding: 28px 0 18px;
+    text-align: left;
+  }
+
+  #page-marketplace .page-head h1 {
+    font-size: 1.9rem;
+  }
+
+  #page-marketplace .market-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  #page-marketplace .product-card__img {
+    height: 155px;
+  }
+
+  #page-marketplace .product-card__body {
+    padding: 16px;
+  }
+}S
