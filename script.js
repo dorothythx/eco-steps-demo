@@ -330,7 +330,7 @@ async function ensureProfile() {
   /* ---------------- Dashboard ---------------- */
   function renderDashboard() {
     const lvl = getLevel(state.points);
-    const inLevel = getProgressInLevel(state.points);
+    const inLevel = getProgressInLevel(getDisplayPoints());
     $("#dashLevel").textContent = lvl;
     $("#dashPoints").textContent = getDisplayPoints();
     $("#dashMissionCount").textContent = state.missionsCompleted;
