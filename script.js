@@ -289,7 +289,7 @@ async function ensureProfile() {
     confirmBtn.addEventListener("click", handler);
   }
 
-  $("[data-action='try-demo']").addEventListener("click", () => navigate("dashboard"));
+  $("[data-action='try-demo']").addEventListener("click", () => navigate("profile"));
   $("[data-action='start-mission']").addEventListener("click", () => navigate("mission"));
 
   /* ---------------- Reset Demo ---------------- */
