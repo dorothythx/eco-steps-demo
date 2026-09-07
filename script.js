@@ -154,6 +154,52 @@ async function ensureProfile() {
     return REWARDS.find(r => r.level > lvl) || null;
   }
 
+  /* ---------------- Real profile from Supabase (profiles table) ----------------
+     currentProfile ถือข้อมูลจริงของผู้ใช้ที่ล็อกอินอยู่ (full_name, class_name,
+     student_code, avatar, points) ใช้แสดงในหน้า Profile และเป็นแหล่งคะแนนหลัก
+     ของทั้งแอป แทนคะแนน Demo เดิมใน localStorage */
+  let currentProfile = null;
+
+  async function loadProfileFromSupabase() {
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    if (!sessionData || !sessionData.session) {
+      currentProfile = null;
+      return null;
+    }
+
+    const userId = sessionData.session.user.id;
+
+    const { data, error } = await supabaseClient
+      .from("profiles")
+      .select("id, full_name, class_name, student_code, avatar, points")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error("โหลด Profile จาก Supabase ไม่สำเร็จ:", error);
+      currentProfile = null;
+      return null;
+    }
+
+    currentProfile = data;
+
+    // ซิงก์ avatar จาก Supabase เข้ากับ state เดิม (ยังใช้ path เดิมในการแสดงผล)
+    if (currentProfile && (currentProfile.avatar === "male" || currentProfile.avatar === "female")) {
+      state.avatar = currentProfile.avatar;
+      saveState();
+    }
+
+    return currentProfile;
+  }
+
+  // แหล่งคะแนนหลักของทั้งแอป: ใช้ profiles.points จาก Supabase ถ้ามี
+  // ถ้ายังโหลดไม่เสร็จ/ไม่มี session ค่อย fallback ไปคะแนน Demo เดิม
+  function getDisplayPoints() {
+    return (currentProfile && typeof currentProfile.points === "number")
+      ? currentProfile.points
+      : state.points;
+  }
+
   /* ---------------- DOM refs ---------------- */
   const $ = (sel, root) => (root || document).querySelector(sel);
   const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
@@ -181,7 +227,7 @@ async function ensureProfile() {
     if (pageName === "mission") renderMissions();
     if (pageName === "dashboard") renderDashboard();
     if (pageName === "rewards") renderRewards();
-    if (pageName === "profile") renderProfile();
+    if (pageName === "profile") { loadProfileFromSupabase().then(renderProfile); }
     if (pageName === "marketplace") renderMarketplace();
     if (pageName === "impact") renderImpact();
     if (pageName === "submit") renderSubmit(opts.missionId);
@@ -264,7 +310,7 @@ async function ensureProfile() {
 
   /* ---------------- Top points pill ---------------- */
   function updateTopPoints() {
-    $("#topPoints").textContent = state.points + " pts";
+    $("#topPoints").textContent = getDisplayPoints() + " pts";
   }
 
   /* ---------------- Hero step trail ---------------- */
@@ -286,7 +332,7 @@ async function ensureProfile() {
     const lvl = getLevel(state.points);
     const inLevel = getProgressInLevel(state.points);
     $("#dashLevel").textContent = lvl;
-    $("#dashPoints").textContent = state.points;
+    $("#dashPoints").textContent = getDisplayPoints();
     $("#dashMissionCount").textContent = state.missionsCompleted;
     $("#dashProgressLabel").textContent = inLevel + "/" + POINTS_PER_LEVEL;
     $("#dashProgressFill").style.width = (inLevel / POINTS_PER_LEVEL * 100) + "%";
@@ -537,11 +583,30 @@ async function loadMissionsFromSupabase() {
 
   /* ---------------- Profile ---------------- */
   function renderProfile() {
-    $("#profilePoints").textContent = state.points;
+    // --- ข้อมูลจริงจาก Supabase (profiles table) ---
+    if (currentProfile) {
+      if (currentProfile.full_name) {
+        $("#profileName").textContent = currentProfile.full_name;
+      }
+      if (currentProfile.class_name) {
+        $("#profileClass").textContent = "ชั้น " + currentProfile.class_name;
+      }
+      const studentCodeEl = $("#profileStudentCode");
+      if (studentCodeEl && currentProfile.student_code) {
+        studentCodeEl.textContent = "รหัสนักเรียน: " + currentProfile.student_code;
+      }
+    }
+
+    // --- คะแนน: ใช้ profiles.points จาก Supabase เป็นหลัก (ไม่ใช่คะแนน Demo เดิม) ---
+    $("#profilePoints").textContent = getDisplayPoints();
+
+    // --- Level / Rewards: ยังคงใช้ระบบเดิมตาม state.points (นอก scope งานนี้) ---
     $("#profileLevel").textContent = getLevel(state.points);
     $("#profileMissionCount").textContent = state.missionsCompleted;
     const unlocked = getUnlockedRewards();
     $("#profileRewardCount").textContent = unlocked.length;
+
+    // --- Avatar: ซิงก์มาจาก Supabase ใน loadProfileFromSupabase() แล้ว (เข้า state.avatar) ---
     $("#profileAvatar").textContent = state.avatar === "female" ? "👧" : "🧑";
 
     $("#avatarMaleBtn").classList.toggle("selected", state.avatar === "male");
@@ -689,6 +754,8 @@ async function handleLogin() {
   state.demoStarted = true;
   saveState();
 
+  await loadProfileFromSupabase(); // โหลด profile จริง (รวม points) ก่อนพาเข้าแอป
+
   console.log("เข้าสู่ระบบสำเร็จ:", userId);
 
   // พาเข้าหน้า Dashboard ทันทีหลังล็อกอินสำเร็จ
@@ -728,6 +795,9 @@ async function init() {
     if (loginScreen) loginScreen.style.display = "none";
     state.demoStarted = true;
     saveState();
+
+    await ensureProfile();
+    await loadProfileFromSupabase(); // โหลดคะแนน/ข้อมูลจริงจาก Supabase ก่อนพาเข้า Dashboard
     navigate("dashboard");
   } else {
     // ไม่มี session จริง -> ล้าง flag เก่าทิ้ง แล้วโชว์หน้า login ให้กรอกใหม่
@@ -736,8 +806,6 @@ async function init() {
     if (loginScreen) loginScreen.style.display = ""; // เผื่อเคยถูกสั่งซ่อนไว้ ให้กลับมาโชว์ตามค่าเริ่มต้น
     renderAndGo("home");
   }
-
-  await ensureProfile();
 }
 
 init();
