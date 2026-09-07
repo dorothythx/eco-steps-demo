@@ -700,3 +700,290 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     padding: 20px;
   }
 }
+/* =========================================================
+   🌱 ECO STEPS — PROFILE PAGE POLISH
+   ========================================================= */
+
+#page-profile .page-head {
+  text-align: center;
+  padding: 42px 0 24px;
+}
+
+#page-profile .page-head h1 {
+  font-size: 2.35rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+#page-profile .page-head p {
+  font-size: 1rem;
+}
+
+/* Main profile layout */
+#page-profile .profile-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, .9fr) minmax(0, 1.1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+/* Profile identity card */
+#page-profile .profile-card {
+  position: relative;
+  text-align: center;
+  padding: 32px 26px 28px;
+  border-radius: 26px;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, #e9f8ed 0%, #ffffff 48%);
+  border: 1px solid rgba(82, 183, 136, .2);
+  box-shadow: 0 8px 24px rgba(27, 67, 50, .09);
+}
+
+#page-profile .profile-card::before {
+  content: "🌿";
+  position: absolute;
+  top: 12px;
+  left: 18px;
+  font-size: 2rem;
+  opacity: .35;
+  transform: rotate(-15deg);
+}
+
+#page-profile .profile-card::after {
+  content: "🍃";
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  font-size: 2.2rem;
+  opacity: .3;
+  transform: rotate(15deg);
+}
+
+/* Big avatar */
+#page-profile .avatar-circle--big {
+  width: 108px;
+  height: 108px;
+  margin: 0 auto 16px;
+  font-size: 3.2rem;
+  background: var(--sun);
+  border: 5px solid #fff;
+  box-shadow:
+    0 6px 18px rgba(27, 67, 50, .12),
+    0 0 0 2px rgba(244, 211, 94, .25);
+}
+
+/* Name */
+#page-profile #profileName {
+  font-size: 1.45rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+/* Class + student code */
+#page-profile #profileClass {
+  margin-bottom: 2px;
+  font-size: .95rem;
+}
+
+#page-profile #profileStudentCode {
+  font-size: .85rem;
+}
+
+/* Avatar selection */
+#page-profile .profile-card h3 {
+  text-align: left;
+  font-size: .95rem;
+  margin: 24px 0 8px;
+}
+
+#page-profile #avatarMaleBtn,
+#page-profile #avatarFemaleBtn {
+  min-height: 78px;
+  border-radius: 18px;
+  border: 2px solid transparent;
+  background: var(--mint);
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease;
+}
+
+#page-profile #avatarMaleBtn:hover,
+#page-profile #avatarFemaleBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+#page-profile #avatarMaleBtn.selected,
+#page-profile #avatarFemaleBtn.selected {
+  border-color: var(--pine);
+  box-shadow: 0 5px 14px rgba(45, 106, 79, .15);
+}
+
+/* Stats panel */
+#page-profile .profile-stats {
+  padding: 26px;
+  border-radius: 26px;
+  background: #fff;
+  border: 1px solid rgba(82, 183, 136, .18);
+  box-shadow: 0 8px 24px rgba(27, 67, 50, .08);
+}
+
+/* Each stat row */
+#page-profile .profile-stats__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 58px;
+  padding: 10px 4px;
+  border-bottom: 1px dashed var(--mint-2);
+}
+
+#page-profile .profile-stats__row span {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+#page-profile .profile-stats__row strong {
+  color: var(--forest);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+}
+
+/* Highlight points */
+#page-profile #profilePoints {
+  color: var(--pine);
+  font-size: 1.7rem;
+}
+
+/* Level */
+#page-profile #profileLevel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--mint);
+  color: var(--forest);
+  font-size: 1rem;
+}
+
+/* Progress card */
+#page-profile .profile-level-progress {
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, var(--mint) 0%, #f8fcf7 100%);
+  border: 1px solid rgba(82, 183, 136, .18);
+  box-shadow: none;
+}
+
+#page-profile .profile-level-progress .card--progress__head {
+  font-size: .9rem;
+  margin-bottom: 12px;
+}
+
+#page-profile .profile-level-progress .progress-track {
+  height: 16px;
+  background: #ccebd5;
+}
+
+#page-profile .profile-level-progress .progress-fill {
+  background: linear-gradient(
+    90deg,
+    var(--leaf-light),
+    var(--pine)
+  );
+}
+
+#page-profile .profile-progress-level {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+#page-profile .profile-progress-level strong {
+  color: var(--forest);
+  font-family: var(--font-display);
+}
+
+/* Rewards heading */
+#page-profile .profile-stats__subhead {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-size: 1.05rem;
+}
+
+/* Rewards */
+#page-profile .profile-reward-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#page-profile .profile-reward-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--mint);
+  color: var(--forest);
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+/* Tablet */
+@media (max-width: 850px) {
+  #page-profile .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  #page-profile .page-head {
+    padding: 28px 0 18px;
+    text-align: left;
+  }
+
+  #page-profile .page-head h1 {
+    font-size: 1.9rem;
+  }
+
+  #page-profile .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  #page-profile .profile-card,
+  #page-profile .profile-stats {
+    padding: 22px 18px;
+    border-radius: 22px;
+  }
+
+  #page-profile .avatar-circle--big {
+    width: 92px;
+    height: 92px;
+    font-size: 2.8rem;
+  }
+
+  #page-profile #profileName {
+    font-size: 1.3rem;
+  }
+
+  #page-profile .profile-stats__row {
+    min-height: 54px;
+  }
+
+  #page-profile .profile-level-progress {
+    padding: 17px;
+  }
+}
