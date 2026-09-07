@@ -332,22 +332,24 @@ async function loadSubmissions() {
   const { data, error } = await supabaseClient
     .from("submissions")
     .select(`
-      id,
-      user_id,
-      mission_id,
-      description,
-      status,
-      created_at,
-      profiles (
-        full_name,
-        class_name,
-        student_code
-      ),
-      missions (
-        title,
-        points
-      )
-    `)
+  id,
+  description,
+  status,
+  created_at,
+  user_id,
+  mission_id,
+  before_image,
+  after_image,
+  profiles (
+    full_name,
+    class_name,
+    student_code
+  ),
+  missions (
+    title,
+    points
+  )
+`)
     .eq("status", "pending")
     .order("created_at", { ascending: false });
 
@@ -405,7 +407,29 @@ async function loadSubmissions() {
         <b>สถานะ:</b>
         ${item.status}
       </div>
+<div class="evidence">
+  <h3>📸 หลักฐานการทำภารกิจ</h3>
 
+  <div class="evidence-grid">
+    <div class="evidence-item">
+      <div class="evidence-label">ก่อนทำ</div>
+      ${
+        submission.before_image
+          ? `<img src="${submission.before_image}" alt="ภาพก่อนทำภารกิจ">`
+          : `<div class="no-image">ไม่มีรูป</div>`
+      }
+    </div>
+
+    <div class="evidence-item">
+      <div class="evidence-label">หลังทำ</div>
+      ${
+        submission.after_image
+          ? `<img src="${submission.after_image}" alt="ภาพหลังทำภารกิจ">`
+          : `<div class="no-image">ไม่มีรูป</div>`
+      }
+    </div>
+  </div>
+</div>
       <br>
 
       <button
