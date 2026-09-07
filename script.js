@@ -599,9 +599,29 @@ async function loadMissionsFromSupabase() {
 
     // --- คะแนน: ใช้ profiles.points จาก Supabase เป็นหลัก (ไม่ใช่คะแนน Demo เดิม) ---
     $("#profilePoints").textContent = getDisplayPoints();
+    // --- Progress Level จากคะแนนจริง ---
+const displayPoints = getDisplayPoints();
+const currentLevel = getLevel(displayPoints);
+const progressInLevel = getProgressInLevel(displayPoints);
+
+$("#profileLevel").textContent = currentLevel;
+$("#profileCurrentLevel").textContent = currentLevel;
+$("#profileProgressLabel").textContent = `${progressInLevel}/${POINTS_PER_LEVEL}`;
+
+const progressPercent =
+  (progressInLevel / POINTS_PER_LEVEL) * 100;
+
+$("#profileProgressFill").style.width = `${progressPercent}%`;
+
+const pointsToNextLevel =
+  POINTS_PER_LEVEL - progressInLevel;
+
+$("#profileNextLevelPoints").textContent =
+  pointsToNextLevel === POINTS_PER_LEVEL
+    ? POINTS_PER_LEVEL
+    : pointsToNextLevel;
 
     // --- Level / Rewards: ยังคงใช้ระบบเดิมตาม state.points (นอก scope งานนี้) ---
-    $("#profileLevel").textContent = getLevel(state.points);
     $("#profileMissionCount").textContent = state.missionsCompleted;
     const unlocked = getUnlockedRewards();
     $("#profileRewardCount").textContent = unlocked.length;

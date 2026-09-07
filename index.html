@@ -25,7 +25,6 @@
 
     <nav class="navlinks" id="navlinks">
       <button class="navlink" data-nav="home"><span class="navlink__icon"></span><span>หน้าหลัก</span></button>
-      <button class="navlink" data-nav="dashboard"><span class="navlink__icon"></span><span>Dashboard</span></button>
       <button class="navlink" data-nav="mission"><span class="navlink__icon"></span><span>Mission</span></button>
       <button class="navlink" data-nav="rewards"><span class="navlink__icon"></span><span>Rewards</span></button>
       <button class="navlink" data-nav="profile"><span class="navlink__icon"></span><span>Profile</span></button>
@@ -47,7 +46,6 @@
 <!-- Mobile bottom tab bar -->
 <nav class="tabbar" id="tabbar">
   <button class="tabbar__item" data-nav="home"><span>🏠</span><small>หน้าหลัก</small></button>
-  <button class="tabbar__item" data-nav="dashboard"><span>📊</span><small>Dashboard</small></button>
   <button class="tabbar__item" data-nav="mission"><span>🎯</span><small>Mission</small></button>
   <button class="tabbar__item" data-nav="rewards"><span>🏆</span><small>Rewards</small></button>
   <button class="tabbar__item" data-nav="profile"><span>👤</span><small>Profile</small></button>
@@ -94,56 +92,6 @@
     <div class="feedback-strip">
       <p>ลองใช้แล้ว ช่วยบอกความคิดเห็นให้เราหน่อย 💚 ใช้เวลาเพียง 1–2 นาที</p>
       <button class="btn btn--sun" id="feedbackBtnHome">💬 ให้ Feedback</button>
-    </div>
-  </section>
-
-  <!-- ===================== DASHBOARD ===================== -->
-  <section class="page" id="page-dashboard" data-page="dashboard">
-    <div class="page-head">
-      <h1>Dashboard</h1>
-      <p>ภาพรวมความคืบหน้าของคุณในภารกิจรักษ์โลก</p>
-    </div>
-
-    <div class="dash-grid">
-      <div class="card card--profile-summary">
-        <div class="avatar-circle" id="dashAvatar">🧑</div>
-        <div class="profile-summary__info">
-          <h2 id="dashName">เรียนดี รักษ์สิ่งแวดล้อม</h2>
-          <p id="dashClass">ชั้น ม.5/1 · รหัส DEMO001</p>
-          <div class="levelbadge">Level <span id="dashLevel">1</span></div>
-        </div>
-      </div>
-
-      <div class="card card--stat">
-        <span class="card--stat__label">คะแนนสะสม</span>
-        <span class="card--stat__value" id="dashPoints">0</span>
-        <span class="card--stat__unit">คะแนน</span>
-      </div>
-
-      <div class="card card--stat">
-        <span class="card--stat__label">ภารกิจสำเร็จ</span>
-        <span class="card--stat__value" id="dashMissionCount">0</span>
-        <span class="card--stat__unit">ภารกิจ</span>
-      </div>
-
-      <div class="card card--progress">
-        <div class="card--progress__head">
-          <span>ความคืบหน้าสู่ Level ถัดไป</span>
-          <span id="dashProgressLabel">0/20</span>
-        </div>
-        <div class="progress-track"><div class="progress-fill" id="dashProgressFill"></div></div>
-        <div class="step-trail" id="dashStepTrail"></div>
-      </div>
-
-      <div class="card card--next-reward">
-        <span class="card--stat__label">รางวัลถัดไป</span>
-        <div id="dashNextReward" class="next-reward__box">—</div>
-      </div>
-
-      <div class="card card--missions-suggest">
-        <div class="card--head-row"><h3>ภารกิจแนะนำ</h3><button class="link-btn" data-nav="mission">ดูทั้งหมด →</button></div>
-        <div id="dashSuggestMissions" class="suggest-list"></div>
-      </div>
     </div>
   </section>
 
@@ -217,15 +165,28 @@
         </div>
       </div>
 
-      <div class="card profile-stats">
-        <div class="profile-stats__row"><span>คะแนนสะสม</span><strong id="profilePoints">0</strong></div>
-        <div class="profile-stats__row"><span>level</span><strong id="profileLevel">1</strong></div>
-        <div class="profile-stats__row"><span>ภารกิจสำเร็จ</span><strong id="profileMissionCount">0</strong></div>
-        <div class="profile-stats__row"><span>รางวัลที่ได้รับ</span><strong id="profileRewardCount">0</strong></div>
-        <h3 class="profile-stats__subhead">Rewards ที่ได้รับ</h3>
-        <div id="profileRewardList" class="profile-reward-list"></div>
-      </div>
-    </div>
+      <div class="profile-stats__row"><span>คะแนนสะสม</span><strong id="profilePoints">0</strong></div>
+<div class="profile-stats__row"><span>level</span><strong id="profileLevel">1</strong></div>
+<div class="profile-stats__row"><span>ภารกิจสำเร็จ</span><strong id="profileMissionCount">0</strong></div>
+<div class="profile-stats__row"><span>รางวัลที่ได้รับ</span><strong id="profileRewardCount">0</strong></div>
+
+<div class="card card--progress profile-level-progress">
+  <div class="card--progress__head">
+    <span>ความคืบหน้าสู่ Level ถัดไป</span>
+    <span id="profileProgressLabel">0/20</span>
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="profileProgressFill"></div>
+  </div>
+
+  <div class="profile-progress-level">
+    <span>Level <strong id="profileCurrentLevel">1</strong></span>
+    <span>อีก <strong id="profileNextLevelPoints">20</strong> คะแนน</span>
+  </div>
+</div>
+
+<h3 class="profile-stats__subhead">Rewards ที่ได้รับ</h3>
   </section>
 
   <!-- ===================== MARKETPLACE ===================== -->
