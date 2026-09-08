@@ -414,8 +414,8 @@ async function loadSubmissions() {
     <div class="evidence-item">
       <div class="evidence-label">ก่อนทำ</div>
       ${
-        submission.before_image
-          ? `<img src="${submission.before_image}" alt="ภาพก่อนทำภารกิจ">`
+        item.before_image
+          ? `<img src="${item.before_image}" alt="ภาพก่อนทำภารกิจ">`
           : `<div class="no-image">ไม่มีรูป</div>`
       }
     </div>
@@ -423,8 +423,8 @@ async function loadSubmissions() {
     <div class="evidence-item">
       <div class="evidence-label">หลังทำ</div>
       ${
-        submission.after_image
-          ? `<img src="${submission.after_image}" alt="ภาพหลังทำภารกิจ">`
+        item.after_image
+          ? `<img src="${item.after_image}" alt="ภาพหลังทำภารกิจ">`
           : `<div class="no-image">ไม่มีรูป</div>`
       }
     </div>
