@@ -8,695 +8,844 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-/* =========================
-   EVIDENCE THUMBNAILS
-   ========================= */
-
-.evidence {
-  margin-top: 20px;
-  padding: 16px;
-  background: #f7fbf8;
-  border: 1px solid rgba(82, 183, 136, .18);
-  border-radius: 18px;
-}
-
-.evidence h3 {
-  margin: 0 0 14px;
-  font-size: 1rem;
-  color: var(--forest);
-}
-
-.evidence-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.evidence-item {
-  text-align: center;
-}
-
-.evidence-label {
-  margin-bottom: 8px;
-  font-size: .8rem;
-  font-weight: 800;
-  color: var(--pine);
-}
-
-.evidence-item img {
-  display: block;
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 14px;
-  cursor: pointer;
-  border: 1px solid rgba(82, 183, 136, .2);
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-
-.evidence-item img:hover {
-  transform: scale(1.02);
-  box-shadow: 0 6px 16px rgba(27, 67, 50, .15);
-}
-
-.no-image {
-  height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 14px;
-  background: #eef5f0;
-  color: var(--muted);
-  font-size: .85rem;
-}
-
-/* =========================
-   IMAGE MODAL
-   ========================= */
-
-.image-modal {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  inset: 0;
-  padding: 30px;
-  background: rgba(0, 0, 0, .75);
-  align-items: center;
-  justify-content: center;
-}
-
-.image-modal.show {
-  display: flex;
-}
-
-.image-modal img {
-  max-width: 90vw;
-  max-height: 85vh;
-  object-fit: contain;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, .3);
-}
-
-.image-modal-close {
-  position: fixed;
-  top: 18px;
-  right: 24px;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border-radius: 50%;
-  background: white;
-  color: var(--forest);
-  font-size: 24px;
-  line-height: 44px;
-  text-align: center;
-  cursor: pointer;
-}
-
-@media (max-width: 600px) {
-  .evidence-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .evidence-item img,
-  .no-image {
-    height: 110px;
-  }
-}
-
   <style>
-  :root {
-    --forest: #1b4332;
-    --pine: #2d6a4f;
-    --leaf: #52b788;
-    --leaf-light: #95d5b2;
-    --mint: #d8f3dc;
-    --cream: #f8f5e9;
-    --sun: #f4d35e;
-    --sun-soft: #fff4bd;
-    --muted: #6b7c72;
-    --white: #ffffff;
-    --danger: #c85c5c;
+    :root {
+      --forest: #1b4332;
+      --pine: #2d6a4f;
+      --leaf: #52b788;
+      --leaf-light: #95d5b2;
+      --mint: #d8f3dc;
+      --cream: #f8f5e9;
+      --sun-soft: #fff4bd;
+      --muted: #6b7c72;
+      --white: #ffffff;
+      --danger: #c85c5c;
 
-    --shadow-sm: 0 4px 12px rgba(27, 67, 50, .07);
-    --shadow-md: 0 12px 28px rgba(27, 67, 50, .10);
-  }
+      --shadow-sm: 0 4px 12px rgba(27, 67, 50, .07);
+      --shadow-md: 0 12px 28px rgba(27, 67, 50, .10);
+    }
 
-  * {
-    box-sizing: border-box;
-  }
+    * {
+      box-sizing: border-box;
+    }
 
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: Arial, sans-serif;
-    color: var(--forest);
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--forest);
 
-    background:
-      radial-gradient(circle at 8% 12%,
-        rgba(149, 213, 178, .28) 0 70px,
-        transparent 71px),
-      radial-gradient(circle at 92% 88%,
-        rgba(244, 211, 94, .18) 0 90px,
-        transparent 91px),
-      var(--cream);
-  }
-
-  .container {
-    width: min(1080px, calc(100% - 32px));
-    margin: 0 auto;
-    padding: 42px 0 60px;
-  }
-
-  /* =========================
-     HEADER
-     ========================= */
-
-  .container > h1 {
-    margin: 0;
-    text-align: left;
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    font-weight: 800;
-    letter-spacing: -.5px;
-  }
-
-  .container > h1::first-letter {
-    font-size: 1.05em;
-  }
-
-  #loading {
-    margin: 8px 0 28px;
-    color: var(--muted);
-    font-size: .95rem;
-  }
-
-  /* =========================
-     DECORATIVE HEADER LINE
-     ========================= */
-
-  .container::after {
-    content: "🌿  ตรวจสอบภารกิจ • อนุมัติคะแนน • ดูแลก้าวเล็ก ๆ ของนักเรียน  🌱";
-    display: block;
-    margin-top: 26px;
-    padding: 14px 18px;
-
-    border-radius: 16px;
-    background: var(--mint);
-    color: var(--pine);
-
-    font-size: .85rem;
-    font-weight: 700;
-    text-align: center;
-  }
-
-  /* =========================
-     SUBMISSION CARD
-     ========================= */
-
-  .submission {
-    position: relative;
-
-    margin: 18px 0;
-    padding: 24px;
-
-    background: var(--white);
-    border: 1px solid rgba(82, 183, 136, .18);
-    border-radius: 24px;
-
-    box-shadow: var(--shadow-sm);
-
-    overflow: hidden;
-
-    transition:
-      transform .2s ease,
-      box-shadow .2s ease,
-      border-color .2s ease;
-  }
-
-  .submission:hover {
-    transform: translateY(-4px);
-    border-color: rgba(82, 183, 136, .35);
-    box-shadow: var(--shadow-md);
-  }
-
-  /* little decorative leaf */
-  .submission::before {
-    content: "🍃";
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    font-size: 1.7rem;
-    opacity: .25;
-    transform: rotate(15deg);
-  }
-
-  .submission h2 {
-    margin: 0 0 18px;
-    padding-right: 40px;
-
-    color: var(--forest);
-    font-size: 1.25rem;
-    font-weight: 800;
-  }
-
-  /* =========================
-     INFO
-     ========================= */
-
-  .info {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-
-    margin: 9px 0;
-
-    color: var(--muted);
-    font-size: .92rem;
-    line-height: 1.5;
-  }
-
-  .info b {
-    min-width: 90px;
-    color: var(--forest);
-  }
-
-  /* =========================
-     STATUS
-     ========================= */
-
-  .info:nth-last-of-type(1) {
-    display: inline-flex;
-    margin-top: 14px;
-    padding: 6px 11px;
-
-    border-radius: 999px;
-    background: var(--sun-soft);
-    color: var(--forest);
-
-    font-size: .78rem;
-    font-weight: 800;
-  }
-
-  /* =========================
-     BUTTONS
-     ========================= */
-
-  button {
-    min-height: 44px;
-    padding: 10px 18px;
-
-    border: 0;
-    border-radius: 14px;
-
-    cursor: pointer;
-
-    font-family: inherit;
-    font-size: .88rem;
-    font-weight: 800;
-
-    transition:
-      transform .18s ease,
-      box-shadow .18s ease,
-      opacity .18s ease;
-  }
-
-  button:hover {
-    transform: translateY(-2px);
-  }
-
-  button:active {
-    transform: translateY(0);
-  }
-
-  .approve {
-    background: var(--pine);
-    color: white;
-
-    box-shadow:
-      0 5px 12px rgba(45, 106, 79, .2);
-  }
-
-  .approve:hover {
-    background: var(--forest);
-    box-shadow:
-      0 8px 16px rgba(45, 106, 79, .25);
-  }
-
-  .reject {
-    background: #f3f5f3;
-    color: var(--danger);
-    border: 1px solid #e4e9e5;
-  }
-
-  .reject:hover {
-    background: #fceeee;
-  }
-
-  /* =========================
-     EMPTY STATE
-     ========================= */
-
-  #submissionList > p {
-    margin: 30px 0;
-    padding: 38px 20px;
-
-    text-align: center;
-
-    background: rgba(255,255,255,.8);
-    border: 1px dashed var(--leaf-light);
-    border-radius: 22px;
-
-    color: var(--pine);
-    font-weight: 700;
-  }
-
-  /* =========================
-     MOBILE
-     ========================= */
-
-  @media (max-width: 600px) {
+      background:
+        radial-gradient(
+          circle at 8% 12%,
+          rgba(149, 213, 178, .28) 0 70px,
+          transparent 71px
+        ),
+        radial-gradient(
+          circle at 92% 88%,
+          rgba(244, 211, 94, .18) 0 90px,
+          transparent 91px
+        ),
+        var(--cream);
+    }
 
     .container {
-      width: min(100% - 22px, 560px);
-      padding: 26px 0 40px;
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 60px;
     }
+
+    /* =========================
+       HEADER
+       ========================= */
 
     .container > h1 {
-      font-size: 1.65rem;
+      margin: 0;
+      text-align: left;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -.5px;
     }
 
-    .container::after {
-      font-size: .76rem;
-      line-height: 1.6;
+    #loading {
+      margin: 8px 0 28px;
+      color: var(--muted);
+      font-size: .95rem;
     }
+
+    /* =========================
+       SUBMISSION CARD
+       ========================= */
 
     .submission {
-      padding: 20px 17px;
-      border-radius: 20px;
+      position: relative;
+
+      margin: 18px 0;
+      padding: 24px;
+
+      background: var(--white);
+      border: 1px solid rgba(82, 183, 136, .18);
+      border-radius: 24px;
+
+      box-shadow: var(--shadow-sm);
+
+      overflow: hidden;
+
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+    }
+
+    .submission:hover {
+      transform: translateY(-4px);
+      border-color: rgba(82, 183, 136, .35);
+      box-shadow: var(--shadow-md);
+    }
+
+    .submission::before {
+      content: "🍃";
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 1.7rem;
+      opacity: .25;
+      transform: rotate(15deg);
     }
 
     .submission h2 {
-      font-size: 1.05rem;
-      margin-bottom: 16px;
+      margin: 0 0 18px;
+      padding-right: 40px;
+
+      color: var(--forest);
+      font-size: 1.25rem;
+      font-weight: 800;
     }
 
+    /* =========================
+       INFO
+       ========================= */
+
     .info {
-      display: block;
-      margin: 10px 0;
-      font-size: .85rem;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+
+      margin: 9px 0;
+
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.5;
     }
 
     .info b {
-      display: inline-block;
-      min-width: 76px;
+      min-width: 90px;
+      color: var(--forest);
+    }
+
+    /* =========================
+       STATUS
+       ========================= */
+
+    .status {
+      display: inline-flex;
+
+      margin-top: 14px;
+      padding: 6px 11px;
+
+      border-radius: 999px;
+      background: var(--sun-soft);
+      color: var(--forest);
+
+      font-size: .78rem;
+      font-weight: 800;
+    }
+
+    /* =========================
+       EVIDENCE
+       ========================= */
+
+    .evidence {
+      margin-top: 20px;
+      padding: 16px;
+
+      background: #f7fbf8;
+      border: 1px solid rgba(82, 183, 136, .18);
+      border-radius: 18px;
+    }
+
+    .evidence h3 {
+      margin: 0 0 14px;
+
+      font-size: 1rem;
+      color: var(--forest);
+    }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .evidence-item {
+      text-align: center;
+    }
+
+    .evidence-label {
+      margin-bottom: 8px;
+
+      font-size: .8rem;
+      font-weight: 800;
+      color: var(--pine);
+    }
+
+    .evidence-item img {
+      display: block;
+
+      width: 100%;
+      height: 150px;
+
+      object-fit: cover;
+
+      border-radius: 14px;
+      border: 1px solid rgba(82, 183, 136, .2);
+
+      cursor: pointer;
+
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .evidence-item img:hover {
+      transform: scale(1.02);
+
+      box-shadow:
+        0 6px 16px rgba(27, 67, 50, .15);
+    }
+
+    .no-image {
+      height: 150px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 14px;
+
+      background: #eef5f0;
+      color: var(--muted);
+
+      font-size: .85rem;
+    }
+
+    /* =========================
+       BUTTONS
+       ========================= */
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
     }
 
     button {
-      width: 100%;
-      margin: 5px 0;
+      min-height: 44px;
+      padding: 10px 18px;
+
+      border: 0;
+      border-radius: 14px;
+
+      cursor: pointer;
+
+      font-family: inherit;
+      font-size: .88rem;
+      font-weight: 800;
+
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        opacity .18s ease;
     }
-  }
-</style>
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .approve {
+      background: var(--pine);
+      color: white;
+
+      box-shadow:
+        0 5px 12px rgba(45, 106, 79, .2);
+    }
+
+    .approve:hover {
+      background: var(--forest);
+
+      box-shadow:
+        0 8px 16px rgba(45, 106, 79, .25);
+    }
+
+    .reject {
+      background: #f3f5f3;
+      color: var(--danger);
+
+      border: 1px solid #e4e9e5;
+    }
+
+    .reject:hover {
+      background: #fceeee;
+    }
+
+    /* =========================
+       EMPTY STATE
+       ========================= */
+
+    #submissionList > p {
+      margin: 30px 0;
+      padding: 38px 20px;
+
+      text-align: center;
+
+      background: rgba(255,255,255,.8);
+
+      border: 1px dashed var(--leaf-light);
+      border-radius: 22px;
+
+      color: var(--pine);
+      font-weight: 700;
+    }
+
+    /* =========================
+       IMAGE MODAL
+       ========================= */
+
+    .image-modal {
+      display: none;
+
+      position: fixed;
+      z-index: 9999;
+
+      inset: 0;
+
+      padding: 30px;
+
+      background: rgba(0, 0, 0, .75);
+
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-modal.show {
+      display: flex;
+    }
+
+    .image-modal img {
+      max-width: 90vw;
+      max-height: 85vh;
+
+      object-fit: contain;
+
+      border-radius: 16px;
+
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, .3);
+    }
+
+    .image-modal-close {
+      position: fixed;
+
+      top: 18px;
+      right: 24px;
+
+      width: 44px;
+      height: 44px;
+
+      padding: 0;
+
+      border-radius: 50%;
+
+      background: white;
+      color: var(--forest);
+
+      font-size: 24px;
+      line-height: 44px;
+      text-align: center;
+    }
+
+    /* =========================
+       DECORATIVE FOOTER
+       ========================= */
+
+    .container::after {
+      content: "🌿  ตรวจสอบภารกิจ • อนุมัติคะแนน • ดูแลก้าวเล็ก ๆ ของนักเรียน  🌱";
+
+      display: block;
+
+      margin-top: 26px;
+      padding: 14px 18px;
+
+      border-radius: 16px;
+
+      background: var(--mint);
+      color: var(--pine);
+
+      font-size: .85rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 600px) {
+
+      .container {
+        width: min(100% - 22px, 560px);
+        padding: 26px 0 40px;
+      }
+
+      .container > h1 {
+        font-size: 1.65rem;
+      }
+
+      .container::after {
+        font-size: .76rem;
+        line-height: 1.6;
+      }
+
+      .submission {
+        padding: 20px 17px;
+        border-radius: 20px;
+      }
+
+      .submission h2 {
+        font-size: 1.05rem;
+        margin-bottom: 16px;
+      }
+
+      .info {
+        display: block;
+        margin: 10px 0;
+        font-size: .85rem;
+      }
+
+      .info b {
+        display: inline-block;
+        min-width: 76px;
+      }
+
+      .evidence-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .evidence-item img,
+      .no-image {
+        height: 110px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+  <div class="container">
 
-  <h1>🌱 Eco Steps Admin Review</h1>
+    <h1>🌱 Eco Steps Admin Review</h1>
 
-  <p id="loading">กำลังโหลดรายการ...</p>
+    <p id="loading">กำลังโหลดรายการ...</p>
 
-  <div id="submissionList"></div>
-<div id="imageModal" class="image-modal" onclick="closeImageModal()">
-  <button class="image-modal-close" onclick="closeImageModal()">×</button>
-  <img id="modalImage" src="" alt="หลักฐานการทำภารกิจ" onclick="event.stopPropagation()">
-</div>
+    <div id="submissionList"></div>
 
-<script>
-
-const SUPABASE_URL = "https://rcyhzhrfzmxiqqtubxzs.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_DxfpxxjOan0XCrETEq8kXQ_4s2o7suI";
-
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-
-
-// โหลดภารกิจที่รอตรวจ
-async function loadSubmissions() {
-
-  const { data, error } = await supabaseClient
-    .from("submissions")
-    .select(`
-  id,
-  description,
-  status,
-  created_at,
-  user_id,
-  mission_id,
-  before_image,
-  after_image,
-  profiles (
-    full_name,
-    class_name,
-    student_code
-  ),
-  missions (
-    title,
-    points
-  )
-`)
-    .eq("status", "pending")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error(error);
-    document.getElementById("loading").textContent =
-      "โหลดข้อมูลไม่สำเร็จ";
-    return;
-  }
-
-  document.getElementById("loading").style.display = "none";
-
-  const list = document.getElementById("submissionList");
-
-  if (!data || data.length === 0) {
-    list.innerHTML = "<p>🎉 ไม่มีภารกิจที่รอตรวจ</p>";
-    return;
-  }
-
-  list.innerHTML = "";
-
-  data.forEach(item => {
-
-    const profile = item.profiles;
-    const mission = item.missions;
-
-    const card = document.createElement("div");
-
-    card.className = "submission";
-
-    card.innerHTML = `
-      <h2>🌱 ${mission?.title || "ไม่พบชื่อภารกิจ"}</h2>
-
-      <div class="info">
-        <b>นักเรียน:</b>
-        ${profile?.full_name || "-"}
-      </div>
-
-      <div class="info">
-        <b>ชั้น:</b>
-        ${profile?.class_name || "-"}
-      </div>
-
-      <div class="info">
-        <b>รหัส:</b>
-        ${profile?.student_code || "-"}
-      </div>
-
-      <div class="info">
-        <b>คำอธิบาย:</b>
-        ${item.description || "-"}
-      </div>
-
-      <div class="info">
-        <b>สถานะ:</b>
-        ${item.status}
-      </div>
-<div class="evidence">
-  <h3>📸 หลักฐานการทำภารกิจ</h3>
-
-  <div class="evidence-grid">
-    <div class="evidence-item">
-      ? `<img src="${item.before_image}" alt="ภาพก่อนทำภารกิจ" onclick="openImageModal('${item.before_image}')">`
-      ${
-        item.before_image
-          ? `<img src="${item.after_image}" alt="ภาพหลังทำภารกิจ" onclick="openImageModal('${item.after_image}')">`
-          : `<div class="no-image">ไม่มีรูป</div>`
-      }
-    </div>
-
-    <div class="evidence-item">
-      <div class="evidence-label">หลังทำ</div>
-      ${
-        item.after_image
-          ? `<img src="${item.after_image}" alt="ภาพหลังทำภารกิจ">`
-          : `<div class="no-image">ไม่มีรูป</div>`
-      }
-    </div>
   </div>
-</div>
-      <br>
 
-      <button
-        class="approve"
-        onclick="approveSubmission('${item.id}')">
-        ✅ อนุมัติ +5 คะแนน
-      </button>
+  <!-- IMAGE MODAL -->
+  <div
+    id="imageModal"
+    class="image-modal"
+    onclick="closeImageModal()"
+  >
+    <button
+      class="image-modal-close"
+      onclick="closeImageModal()"
+    >
+      ×
+    </button>
 
-      <button
-        class="reject"
-        onclick="rejectSubmission('${item.id}')">
-        ❌ ไม่อนุมัติ
-      </button>
-    `;
+    <img
+      id="modalImage"
+      src=""
+      alt="หลักฐานการทำภารกิจ"
+      onclick="event.stopPropagation()"
+    >
+  </div>
 
-    list.appendChild(card);
-  });
-}
+  <script>
 
+    const SUPABASE_URL =
+      "https://rcyhzhrfzmxiqqtubxzs.supabase.co";
 
-// อนุมัติ
-async function approveSubmission(id) {
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_DxfpxxjOan0XCrETEq8kXQ_4s2o7suI";
 
-  const { data, error } = await supabaseClient
-    .rpc("approve_submission", {
-      submission_id: id
-    });
-
-  if (error) {
-    console.error(error);
-    alert("อนุมัติไม่สำเร็จ");
-    return;
-  }
-
-  if (!data.success) {
-    alert(data.message);
-    return;
-  }
-
-  alert("อนุมัติสำเร็จ! นักเรียนได้รับ 5 คะแนน 🌱");
-
-  loadSubmissions();
-}
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
 
 
-// ไม่อนุมัติ
-async function rejectSubmission(id) {
+    // =========================
+    // โหลดภารกิจที่รอตรวจ
+    // =========================
 
-  const { error } = await supabaseClient
-    .from("submissions")
-    .update({
-      status: "rejected",
-      reviewed_at: new Date().toISOString()
-    })
-    .eq("id", id);
+    async function loadSubmissions() {
 
-  if (error) {
-    console.error(error);
-    alert("ไม่สามารถปฏิเสธภารกิจได้");
-    return;
-  }
+      const { data, error } =
+        await supabaseClient
+          .from("submissions")
+          .select(`
+            id,
+            description,
+            status,
+            created_at,
+            user_id,
+            mission_id,
+            before_image,
+            after_image,
 
-  alert("ไม่อนุมัติภารกิจแล้ว");
+            profiles (
+              full_name,
+              class_name,
+              student_code
+            ),
 
-  loadSubmissions();
-}
+            missions (
+              title,
+              points
+            )
+          `)
+          .eq("status", "pending")
+          .order("created_at", {
+            ascending: false
+          });
 
 
-loadSubmissions();
+      if (error) {
 
-function openImageModal(imageUrl) {
-  const modal = document.getElementById("imageModal");
-  const modalImage = document.getElementById("modalImage");
+        console.error(error);
 
-  modalImage.src = imageUrl;
-  modal.classList.add("show");
-}
+        document.getElementById("loading")
+          .textContent =
+          "โหลดข้อมูลไม่สำเร็จ";
 
-function closeImageModal() {
-  const modal = document.getElementById("imageModal");
-  const modalImage = document.getElementById("modalImage");
+        return;
+      }
 
-  modal.classList.remove("show");
-  modalImage.src = "";
-}
 
-</script>
+      document.getElementById("loading")
+        .style.display = "none";
+
+
+      const list =
+        document.getElementById("submissionList");
+
+
+      if (!data || data.length === 0) {
+
+        list.innerHTML =
+          "<p>🎉 ไม่มีภารกิจที่รอตรวจ</p>";
+
+        return;
+      }
+
+
+      list.innerHTML = "";
+
+
+      data.forEach(item => {
+
+        const profile = item.profiles;
+        const mission = item.missions;
+
+
+        const card =
+          document.createElement("div");
+
+
+        card.className = "submission";
+
+
+        card.innerHTML = `
+
+          <h2>
+            🌱 ${mission?.title || "ไม่พบชื่อภารกิจ"}
+          </h2>
+
+
+          <div class="info">
+            <b>นักเรียน:</b>
+            ${profile?.full_name || "-"}
+          </div>
+
+
+          <div class="info">
+            <b>ชั้น:</b>
+            ${profile?.class_name || "-"}
+          </div>
+
+
+          <div class="info">
+            <b>รหัส:</b>
+            ${profile?.student_code || "-"}
+          </div>
+
+
+          <div class="info">
+            <b>คำอธิบาย:</b>
+            ${item.description || "-"}
+          </div>
+
+
+          <div class="status">
+            🕐 ${item.status}
+          </div>
+
+
+          <!-- หลักฐาน -->
+
+          <div class="evidence">
+
+            <h3>
+              📸 หลักฐานการทำภารกิจ
+            </h3>
+
+
+            <div class="evidence-grid">
+
+              <!-- ก่อนทำ -->
+
+              <div class="evidence-item">
+
+                <div class="evidence-label">
+                  ก่อนทำ
+                </div>
+
+                ${
+                  item.before_image
+                    ? `
+                      <img
+                        src="${item.before_image}"
+                        alt="ภาพก่อนทำภารกิจ"
+                        onclick="openImageModal('${item.before_image}')"
+                      >
+                    `
+                    : `
+                      <div class="no-image">
+                        ไม่มีรูป
+                      </div>
+                    `
+                }
+
+              </div>
+
+
+              <!-- หลังทำ -->
+
+              <div class="evidence-item">
+
+                <div class="evidence-label">
+                  หลังทำ
+                </div>
+
+                ${
+                  item.after_image
+                    ? `
+                      <img
+                        src="${item.after_image}"
+                        alt="ภาพหลังทำภารกิจ"
+                        onclick="openImageModal('${item.after_image}')"
+                      >
+                    `
+                    : `
+                      <div class="no-image">
+                        ไม่มีรูป
+                      </div>
+                    `
+                }
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ปุ่ม -->
+
+          <div class="buttons">
+
+            <button
+              class="approve"
+              onclick="approveSubmission('${item.id}')"
+            >
+              ✅ อนุมัติ +5 คะแนน
+            </button>
+
+
+            <button
+              class="reject"
+              onclick="rejectSubmission('${item.id}')"
+            >
+              ❌ ไม่อนุมัติ
+            </button>
+
+          </div>
+
+        `;
+
+
+        list.appendChild(card);
+
+      });
+
+    }
+
+
+    // =========================
+    // เปิดรูปใหญ่
+    // =========================
+
+    function openImageModal(imageUrl) {
+
+      const modal =
+        document.getElementById("imageModal");
+
+      const modalImage =
+        document.getElementById("modalImage");
+
+
+      modalImage.src = imageUrl;
+
+      modal.classList.add("show");
+    }
+
+
+    // =========================
+    // ปิดรูปใหญ่
+    // =========================
+
+    function closeImageModal() {
+
+      const modal =
+        document.getElementById("imageModal");
+
+      const modalImage =
+        document.getElementById("modalImage");
+
+
+      modal.classList.remove("show");
+
+      modalImage.src = "";
+    }
+
+
+    // =========================
+    // อนุมัติ
+    // =========================
+
+    async function approveSubmission(id) {
+
+      const { data, error } =
+        await supabaseClient
+          .rpc("approve_submission", {
+            submission_id: id
+          });
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert("อนุมัติไม่สำเร็จ");
+
+        return;
+      }
+
+
+      if (!data.success) {
+
+        alert(data.message);
+
+        return;
+      }
+
+
+      alert(
+        "อนุมัติสำเร็จ! นักเรียนได้รับ 5 คะแนน 🌱"
+      );
+
+
+      loadSubmissions();
+    }
+
+
+    // =========================
+    // ไม่อนุมัติ
+    // =========================
+
+    async function rejectSubmission(id) {
+
+      const { error } =
+        await supabaseClient
+          .from("submissions")
+          .update({
+            status: "rejected",
+            reviewed_at:
+              new Date().toISOString()
+          })
+          .eq("id", id);
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert("ไม่สามารถปฏิเสธภารกิจได้");
+
+        return;
+      }
+
+
+      alert("ไม่อนุมัติภารกิจแล้ว");
+
+
+      loadSubmissions();
+    }
+
+
+    // =========================
+    // เริ่มโหลดข้อมูล
+    // =========================
+
+    loadSubmissions();
+
+  </script>
 
 </body>
 </html>
-.evidence {
-  margin: 20px 0;
-  padding: 18px;
-  background: #f6fbf7;
-  border-radius: 18px;
-  border: 1px solid rgba(82, 183, 136, .15);
-}
-
-.evidence h3 {
-  margin: 0 0 14px;
-  font-size: 1rem;
-  color: var(--forest);
-}
-
-.evidence-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-.evidence-item {
-  min-width: 0;
-}
-
-.evidence-label {
-  margin-bottom: 7px;
-  font-size: .8rem;
-  font-weight: 800;
-  color: var(--pine);
-}
-
-.evidence-item img {
-  display: block;
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 14px;
-  background: #eaf4ed;
-}
-
-.no-image {
-  height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 14px;
-  background: #eef3ef;
-  color: var(--muted);
-  font-size: .85rem;
-}
-
-@media (max-width: 600px) {
-  .evidence-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .evidence-item img,
-  .no-image {
-    height: 240px;
-  }
-}
