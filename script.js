@@ -100,6 +100,75 @@ async function ensureProfile() {
     { level: 30, title: "Eco Champion", icon: "👑" },
   ];
 
+  /* ---------------- Profile Collections ---------------- */
+
+  const PROFILE_COLLECTIONS = {
+    3: {
+      name: "Nature Collection",
+      description: "โปรไฟล์ธีมธรรมชาติ",
+      images: []
+    },
+
+    6: {
+      name: "Space Collection",
+      description: "โปรไฟล์ธีมอวกาศ",
+      images: []
+    },
+
+    9: {
+      name: "Ocean Collection",
+      description: "โปรไฟล์ธีมทะเลและมหาสมุทร",
+      images: []
+    },
+
+    11: {
+      name: "Festival Collection",
+      description: "โปรไฟล์ธีมเทศกาล",
+      images: []
+    },
+
+    13: {
+      name: "Fantasy Collection",
+      description: "โปรไฟล์ธีมแฟนตาซีและการผจญภัย",
+      images: []
+    },
+
+    16: {
+      name: "Cartoon Collection",
+      description: "โปรไฟล์สไตล์การ์ตูน",
+      images: []
+    },
+
+    19: {
+      name: "Ultimate Collection",
+      description: "โปรไฟล์คอลเลกชันพิเศษ",
+      images: []
+    }
+  };
+
+
+  /* ---------------- Frame Collections ---------------- */
+
+  const FRAME_COLLECTIONS = {
+    5: {
+      name: "Nature Frames",
+      description: "กรอบโปรไฟล์ธีมธรรมชาติ",
+      images: []
+    },
+
+    10: {
+      name: "Cosmic Frames",
+      description: "กรอบโปรไฟล์ธีมอวกาศ",
+      images: []
+    },
+
+    18: {
+      name: "Ultimate Frames",
+      description: "กรอบโปรไฟล์คอลเลกชันพิเศษ",
+      images: []
+    }
+  };
+
   const PRODUCTS = [
     { id: "bottle", icon: "🌿", name: "แก้วน้ำรักษ์โลก", price: 199, desc: "แก้วน้ำสแตนเลสรักษ์โลก เก็บความเย็นได้นาน ลดการใช้ขวดพลาสติก" },
     { id: "totebag", icon: "👜", name: "ถุงผ้า", price: 129, desc: "ถุงผ้าดีไซน์น่ารัก ใช้แทนถุงพลาสติกได้ทุกโอกาส" },
